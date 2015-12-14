@@ -32,12 +32,37 @@
  */
 
 var initialTone = new Audio("https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_01.mp3");
-window.setInterval( function() {
+
+function playTones() {
+
+}
+    // Structure is: [<playCount>,<audio_asset_URL>] the playList is always started off at zero playCount
+    // until ticket detection increments that count.
+    playList = [
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_01.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_02.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_03.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_04.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_05.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_2_act_06.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_2_act_07.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_2_act_08.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_09.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_10.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_11.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_12.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_13.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_14.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_15.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_16.mp3"],
+        [0,"https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_3_crt2_17.mp3"]
+    ];
+
+
+window.setInterval(function () {
 
     var wlRegex = "(user one|user two|user three|user four)",
         whiteList = new RegExp(wlRegex, "i");
-
-    //var generalSearchTermList = [""];
 
     var tktListIframe = document.getElementsByTagName('iframe')[1],
         tktListContainer = tktListIframe.contentDocument.querySelector(
@@ -48,7 +73,7 @@ window.setInterval( function() {
     for (var tktRow = 0; tktRow < tktList.length; tktRow++) {
 
         //Check to make sure this is actually a ticket row
-        if (tktList[tktRow].id.match(/(ticket)(\d{2,12})/)){
+        if (tktList[tktRow].id.match(/(ticket)(\d{2,12})/)) {
             var thisTktColList = tktList[tktRow].getElementsByTagName('td');
 
             // Check ticket ownership against a list of users and don't notify for their tickets
@@ -57,17 +82,19 @@ window.setInterval( function() {
                 if (thisTktColList[5].getElementsByTagName("img").length !== 0) {
                     var ticketTypeText = thisTktColList[5].getElementsByTagName("img")[0].title,
                         ttType = ticketTypeText.toLowerCase();
+
+
                     if (ttType === "staff followup") {
                         var tktTimeContext = thisTktColList[5].querySelector("label").textContent;
                         var secs,
                             mins,
                             hrs;
                         if (tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)) {
-                            if("staff" + tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)[1] > 1) {
+                            if ("staff" + tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)[1] > 1) {
                             }
                         }
                     }
-                    if (ttType === "client followup"){
+                    if (ttType === "client followup") {
                         tktTimeContext = thisTktColList[5].querySelector("label").textContent;
                         if (tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)) {
                             secs = tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)[1];
@@ -84,9 +111,11 @@ window.setInterval( function() {
                             console.log("client responded " + hrs + " hours ago");
                         }
                     }
-                } else {
+                } else if (thisTktColList[5].getElementsByTagName("em").length !== 0) {
                     var updatedCol = thisTktColList[5].getElementsByTagName("em")[0];
+
                     if (updatedCol.textContent.match(/none/i)) {
+
                         tktTimeContext = thisTktColList[4].querySelector("label").textContent;
                         if (tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)) {
                             secs = tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)[1];
