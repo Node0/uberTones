@@ -31,8 +31,6 @@
  *
  */
 
-var initialTone = new Audio("https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_01.mp3");
-
 function playTones() {
 
 }
@@ -59,23 +57,43 @@ function playTones() {
     ];
 
 
+
+function playbackTone (plCount) {
+    var initialTone = new Audio("https://raw.githubusercontent.com/Node0/uberTones/master/tones/ubt_1_nice_01.mp3"),
+        playCount = plCount,
+        now = new Date();
+    initialTone.load();
+
+    initialTone.play();
+    console.log(now.getTime());
+    console.log("playCount is: " + playCount);
+}
+
+
+
 window.setInterval(function () {
 
     var wlRegex = "(user one|user two|user three|user four)",
         whiteList = new RegExp(wlRegex, "i");
 
-    var tktListIframe = document.getElementsByTagName('iframe')[1],
-        tktListContainer = tktListIframe.contentDocument.querySelector(
+    var tktListIframe = document.getElementsByTagName('body')[0],
+        tktListContainer = tktListIframe.querySelector(
             'form#t_list[action*="?"] div#list_container.container'),
         tktListTable = tktListContainer.getElementsByTagName('table')[1],
-        tktList = tktListTable.getElementsByTagName('tr');
+        tktList = Array.prototype.slice.call(tktListTable.getElementsByTagName('tr'), 0);
+    tktList.shift();
 
-    for (var tktRow = 0; tktRow < tktList.length; tktRow++) {
+    var now = new Date();
+    var playCount = 0;
+    console.log(tktList);
+    for (var tktRow = 0, plOffsetCtr = 1; tktRow < tktList.length; tktRow++, plOffsetCtr++) {
+        var playbackOffset =   plOffsetCtr * 500;
+        console.log("tktRow value is: " + tktRow);
+        console.log("Playback offset is: " + playbackOffset);
 
         //Check to make sure this is actually a ticket row
         if (tktList[tktRow].id.match(/(ticket)(\d{2,12})/)) {
             var thisTktColList = tktList[tktRow].getElementsByTagName('td');
-
             // Check ticket ownership against a list of users and don't notify for their tickets
             if (thisTktColList[9].textContent.match(whiteList) === null) {
 
@@ -89,52 +107,58 @@ window.setInterval(function () {
                         var secs,
                             mins,
                             hrs;
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)) {
-                            if ("staff" + tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)[1] > 1) {
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)) {
+                            if ("staff" + tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)[1] > 1) {
                             }
                         }
                     }
+
+
                     if (ttType === "client followup") {
                         tktTimeContext = thisTktColList[5].querySelector("label").textContent;
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)) {
-                            secs = tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)[1];
-                            initialTone.play();
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(second)(s?)/i)) {
+                            secs = tktTimeContext.match(/(\d{1,2})(\s)(second)(s?)/i)[1];
+                            playCount++;
+                            setTimeout(playbackTone, playbackOffset, playCount);
                             console.log("client responded " + secs + " secs ago");
                         }
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(minutes)/i)) {
-                            mins = tktTimeContext.match(/(\d{1,2})(\s)(minutes)/i)[1];
-                            initialTone.play();
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(minute)(s?)/i)) {
+                            mins = tktTimeContext.match(/(\d{1,2})(\s)(minute)(s?)/i)[1];
+                            playCount++;
+                            setTimeout(playbackTone, playbackOffset, playCount);
                             console.log("client responded " + mins + " mins ago");
                         }
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)) {
-                            hrs = tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)[1];
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)) {
+                            hrs = tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)[1];
                             console.log("client responded " + hrs + " hours ago");
                         }
                     }
+
+
                 } else if (thisTktColList[5].getElementsByTagName("em").length !== 0) {
                     var updatedCol = thisTktColList[5].getElementsByTagName("em")[0];
 
                     if (updatedCol.textContent.match(/none/i)) {
-
                         tktTimeContext = thisTktColList[4].querySelector("label").textContent;
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)) {
-                            secs = tktTimeContext.match(/(\d{1,2})(\s)(seconds)/i)[1];
-                            initialTone.play();
-                            console.log("client requested " + secs + " secs ago");
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(second)(s?)/i)) {
+                            secs = tktTimeContext.match(/(\d{1,2})(\s)(second)(s?)/i)[1];
+                            playCount++;
+                            setTimeout(playbackTone, playbackOffset, playCount);
+                            console.log("client initial request " + secs + " secs ago");
                         }
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(minutes)/i)) {
-                            mins = tktTimeContext.match(/(\d{1,2})(\s)(minutes)/i)[1];
-                            initialTone.play();
-                            console.log("client requested " + mins + " mins ago");
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(minute)(s?)/i)) {
+                            mins = tktTimeContext.match(/(\d{1,2})(\s)(minute)(s?)/i)[1];
+                            playCount++;
+                            setTimeout(playbackTone, playbackOffset, playCount);
+                            console.log("client initial request " + mins + " mins ago");
                         }
-                        if (tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)) {
-                            hrs = tktTimeContext.match(/(\d{1,2})(\s)(hours)/i)[1];
-                            console.log("client requested " + hrs + " hours ago");
+                        if (tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)) {
+                            hrs = tktTimeContext.match(/(\d{1,2})(\s)(hour)(s?)/i)[1];
+                            console.log("client initial request " + hrs + " hours ago");
                         }
                     }
                 }
             }
         }
     }
-
-}, 60000);
+}, 10000);
