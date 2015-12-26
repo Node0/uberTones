@@ -43,7 +43,7 @@
  */
 
 // How many seconds to wait between each script iteration.
-var seconds = 30;
+var seconds = 10;
 
 // Audio Array - Seconds:Link to JavaScript playable audio file.
 // The idea is that it will play the closest lowest time (in seconds) defined in the array with the tickets updated time.
@@ -125,8 +125,8 @@ window.setInterval( function() {
 
     //var generalSearchTermList = [""];
 
-    var tktListIframe = document.getElementsByTagName('iframe')[1],
-        tktListContainer = tktListIframe.contentDocument.querySelector('form#t_list[action*="?"] div#list_container.container'),
+    var tktListIframe = document.getElementsByTagName('body')[0],
+        tktListContainer = tktListIframe.querySelector('form#t_list[action*="?"] div#list_container.container'),
         tktListTable = tktListContainer.getElementsByTagName('table')[1],
         tktList = tktListTable.getElementsByTagName('tr');
 
@@ -155,6 +155,7 @@ window.setInterval( function() {
 
                 var tktTime = tktTimeContext.match(/(\d{1,2}) (minute.|second.|hour.)/i);
 
+                var playbackOffset = ( tktRow !== 0 ? 500 * tktRow : 500);
                 if (ticketTypeText === "Staff Followup") { console.log(tktList[tktRow].id + " - " + tktTime); setTimeout(playTimeTone, (500 * tktRow), "Staff", tktTime); continue; }
                 if (ticketTypeText === "Client Followup" || ticketTypeText === "Merge") { console.log(tktList[tktRow].id + " - " + tktTime); setTimeout(playTimeTone, (500 * tktRow), "Client", tktTime); continue; }
                 if (ticketTypeText === "Timer") { console.log(tktList[tktRow].id + " - " + tktTime); setTimeout(playTimeTone, (500 * tktRow), "Timer", tktTime); continue; }
